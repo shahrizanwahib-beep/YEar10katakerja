@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tatabahasa Pro: Misi Kuasai Kata Kerja</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+    
+    :root { --base-font: 22px; --content-width: 1600px; }
+    html { font-size: var(--base-font); }
+    body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial; background: #f8fafc; color: #0b0f19; }
+
+    main {
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.05); }
+    .pill { color: #0b0f19; background: rgba(0,0,0,.04); border: 1px solid rgba(0,0,0,.08); border-radius: 14px; padding: .5rem .8rem; }
+    .tag { color: #0b0f19; opacity: .9; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+    .title { font-size: clamp(2.2rem, 2vw + 1.2rem, 3.6rem); line-height: 1.12; font-weight: 900; }
+
+    .btn { border-radius: 14px; font-weight: 700; padding: .6rem 1.2rem; transition: all .1s ease; cursor: pointer; border: none; }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: #3b82f6; color: #fff; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-ghost { background: rgba(0,0,0,.06); color: #0b0f19; }
+    .btn-ghost:hover { background: rgba(0,0,0,.1); }
+    .btn-success { background: #10b981; color: #fff; }
+    .btn-info { background: #0ea5e9; color: #fff; }
+
+    .mfl-badge {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      position: relative; display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.5rem;
+    }
+
+    .obj-strip { position: sticky; top: 0; z-index: 30; background: rgba(248, 250, 252, 0.8); backdrop-filter: saturate(1.2) blur(10px); }
+
+    .activity-box {
+      background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+      border: 1px solid #facc15;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .stimulus-box {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border: 1px solid #0ea5e9;
+      border-radius: 12px;
+      padding: 1.5rem;
+      line-height: 1.6;
+    }
+    
+    .feedback-box {
+        background: #f0fdf4;
+        border-left: 5px solid #22c55e;
+        border-radius: 8px;
+        padding: 1rem;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        min-height: 40px;
+    }
+    
+    .help-center {
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .ai-generated-box {
+        background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        border: 1px solid #c4b5fd;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+    }
+    .ai-generated-box h4 {
+        font-weight: bold;
+        color: #6d28d9;
+        margin-bottom: 0.75rem;
+    }
+    .ai-generated-box ul {
+        list-style-position: inside;
+        list-style-type: disc;
+        padding-left: 0.5rem;
+    }
+    .ai-generated-box p {
+        line-height: 1.6;
+    }
+
+    textarea.answer, input.answer-input {
+      width: 100%; min-height: 120px; border-radius: 14px; border: 1px solid rgba(0,0,0,.12);
+      padding: .9rem 1rem; outline: none; transition: all 0.2s ease;
+    }
+    input.answer-input { min-height: auto; height: 50px; }
+    textarea.answer:focus, input.answer-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.18); }
+
+    .structure-table { border-collapse: collapse; width: 100%; border-radius: 12px; overflow: hidden; }
+    .structure-table th, .structure-table td { border: 1px solid #e5e7eb; padding: 0.75rem 1rem; text-align: left; }
+    .structure-table th { background: #f3f4f6; font-weight: bold; }
+
+    .vocab-helper { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
+    .vocab-button {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: white; border: none; font-size: 1.5rem; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+      transition: all 0.3s ease;
+    }
+    .vocab-button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4); }
+    .vocab-panel {
+      position: absolute; bottom: 80px; right: 0;
+      width: 380px; max-height: 500px; background: white;
+      border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      overflow: hidden; transform: translateY(20px) scale(0.9);
+      opacity: 0; transition: all 0.3s ease; pointer-events: none;
+    }
+    .vocab-panel.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
+    .vocab-tabs { display: flex; border-bottom: 1px solid #e5e7eb; }
+    .vocab-tab { padding: 0.75rem 1rem; cursor: pointer; transition: background 0.2s; font-size: 0.9rem; font-weight: 600; flex-grow: 1; text-align: center; }
+    .vocab-tab:hover { background: #f3f4f6; }
+    .vocab-tab.active { background: #22c55e; color: white; }
+    .vocab-content { padding: 1rem; max-height: 350px; overflow-y: auto; }
+    .vocab-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.5rem; margin-bottom: 0.5rem; background: #f8fafc;
+      border-radius: 8px; cursor: pointer; transition: all 0.2s;
+      font-size: 0.9rem; border-left: 3px solid transparent;
+    }
+    .vocab-item:hover { background: #f0fdf4; border-left-color: #22c55e; transform: translateX(4px); }
+    .vocab-icon { font-size: 1.2rem; }
+    .speak-btn {
+        background: none; border: none; font-size: 1.2rem; cursor: pointer;
+        padding: 0.25rem; border-radius: 50%; transition: background 0.2s;
+    }
+    .speak-btn:hover { background: #e5e7eb; }
+
+    @keyframes fade-in { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 2s linear infinite;
+      margin: 20px auto;
+    }
+
+    #toast-container { position: fixed; top: 20px; right: 20px; z-index: 2000; }
+    .toast {
+        background-color: #2d3748; color: white; padding: 0.75rem 1.25rem;
+        border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        opacity: 0; transform: translateX(100%);
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+    .toast.show { opacity: 1; transform: translateX(0); }
+    
+    .gif-container {
+        width: 100%;
+        max-width: 400px;
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .gif-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .translation { font-size: 0.8em; opacity: 0.7; font-style: italic; }
+    .stage-centered { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50vh; }
+  </style>
+</head>
+<body>
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+  <div class="min-h-screen">
+    <!-- Banner Atas -->
+    <div class="obj-banner">
+      <div class="mx-auto px-6 pt-6" style="max-width: var(--content-width);">
+        <div class="card p-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-start gap-3">
+              <span class="mfl-badge">✍️</span>
+              <div>
+                <div class="font-extrabold">Tatabahasa Pro: Misi Kuasai Kata Kerja</div>
+                <div class="opacity-80 text-sm">Grammar Pro: Verb Mastery Mission</div>
+              </div>
+            </div>
+            <div class="text-sm opacity-75">
+              Selamat Datang, <span id="studentNameDisplay" class="font-bold">Pelajar</span>!
+              <div class="translation">Welcome, Student!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar Objektif Pembelajaran -->
+    <div class="obj-strip">
+      <div class="mx-auto px-6 pt-3" style="max-width: var(--content-width);">
+        <div class="card p-4">
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+                <div class="font-extrabold">Objektif Misi</div>
+                <div class="translation">Mission Objectives</div>
+            </div>
+            <button id="toggleObj" class="btn btn-ghost">Sembunyi / Hide</button>
+          </div>
+          <ul id="objList" class="mt-3 grid sm:grid-cols-3 gap-2 text-sm opacity-90">
+            <li class="pill">Membezakan Kata Kerja Transitif & Tak Transitif</li>
+            <li class="pill">Menggunakan kata kerja dengan betul dalam ayat</li>
+            <li class="pill">Membina ayat yang gramatis dan lengkap</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <main class="py-4">
+      <div class="mx-auto" style="max-width: var(--content-width);">
+        <section id="stage" class="stage px-6 sm:px-10 lg:px-14 py-8 sm:py-10 md:py-12 card" aria-live="polite">
+          <!-- Content will be dynamically loaded here -->
+        </section>
+        <div class="mt-5 flex flex-wrap items-center justify-between gap-3 helper px-6 sm:px-10 lg:px-14">
+          <div id="slide-counter" class="text-sm font-bold text-gray-600">Slide 1 / 12</div>
+          <div id="nav-buttons" class="flex items-center gap-2">
+            <button id="prevBtn" class="btn btn-ghost">← Sebelumnya</button>
+            <button id="nextBtn" class="btn btn-primary">Seterusnya →</button>
+          </div>
+        </div>
+        <div class="mt-3 hint helper flex flex-wrap items-center gap-x-6 gap-y-2 text-sm opacity-90 px-6 sm:px-10 lg:px-14">
+          <div class="flex items-center gap-2">
+            <span>💡</span>
+            <div>Gunakan kekunci <strong>←</strong> dan <strong>→</strong> untuk navigasi.</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span>🖥️</span>
+            <div>Tekan <strong>'f'</strong> untuk skrin penuh.</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Vocabulary Helper -->
+    <div class="vocab-helper">
+      <div id="vocab-panel" class="vocab-panel">
+        <div class="vocab-tabs">
+          <button id="tab-affixes" class="vocab-tab active">Imbuhan</button>
+          <button id="tab-verbs" class="vocab-tab">Kata Kerja</button>
+        </div>
+        <div id="content-affixes" class="vocab-content"></div>
+        <div id="content-verbs" class="vocab-content" style="display: none;"></div>
+      </div>
+      <button id="vocab-toggle" class="vocab-button">
+        📚
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    let studentName = '';
+    let studentAnswers = {};
+    const GEMINI_API_KEY = "AIzaSyCcYYHdsZZXnb_fweeG6QHGF4hzO0n4lSI";
+    const GIPHY_API_KEY = "535QMXdnUccXdDmUUZrk4Mr9GvCV3IEO";
+
+    const slides = [
+        { layout: 'name_input', title: 'Selamat Datang ke Misi Kuasai Kata Kerja!', subtitle: 'Sila masukkan nama anda untuk memulakan misi.' },
+        { layout: 'title_revamped', title: 'Tatabahasa Pro', subtitle: 'Misi Kuasai Kata Kerja', starter: 'Bina satu ayat menggunakan perkataan "membaca".' },
+        { layout: 'focus_card', title: 'Misi 1: Kata Kerja Transitif', content: 'Kata Kerja Transitif (KKT) ialah kata kerja yang <b>mesti diikuti oleh objek</b> untuk melengkapkan maksud ayat. <br><br>Cth: <em>Ahmad menendang <b>bola itu</b>.</em>' },
+        { 
+            layout: 'exercise_fill_in', 
+            title: 'Misi 1: Latihan 1', 
+            instruction: 'Lengkapkan ayat-ayat di bawah dengan objek yang sesuai.', 
+            questions: [
+                'Ibu sedang memasak ________ di dapur.', 
+                'Nelayan itu menangkap ________ di laut.',
+                'Puan Aminah menjahit ________ untuk anaknya.',
+                'Abang sedang membaiki ________ yang rosak.',
+                'Petani itu menanam ________ di sawah.',
+                'Pelukis itu melukis ________ yang indah.',
+                'Murid-murid sedang menghias ________ mereka.',
+                'Ayah membaca ________ pada waktu pagi.',
+                'Adik meminum ________ sehingga habis.',
+                'Pak Ali menebang ________ di belakang rumah.',
+            ], 
+            answerId: 'ex1' 
+        },
+        { 
+            layout: 'exercise_correction_list', 
+            title: 'Misi 1: Latihan 2', 
+            instruction: 'Ayat-ayat di bawah ini salah kerana tidak mempunyai objek. Betulkan ayat-ayat tersebut.', 
+            wrongSentences: [
+                'Penceramah itu sedang menerangkan.',
+                'Budak lelaki itu membaling.',
+                'Cikgu Suraya sedang menanda.',
+                'Mereka sedang menonton di ruang tamu.',
+                'Penyanyi itu akan mendendangkan.',
+                'Tukang masak itu sedang menghidangkan.',
+                'Pemandu itu sedang memandu.',
+                'Penulis itu sedang mengarang.',
+                'Kami sedang mendengar.',
+                'Adik sedang melukis.'
+            ], 
+            answerId: 'ex2' 
+        },
+        { layout: 'focus_card', title: 'Misi 2: Kata Kerja Tak Transitif', content: 'Kata Kerja Tak Transitif (KKTT) ialah kata kerja yang <b>tidak memerlukan objek</b>. Ia terbahagi kepada dua: <br><br>1. <b>Tanpa Pelengkap:</b> <em>Adik sedang tidur.</em><br>2. <b>Berpelengkap:</b> <em>Adik menjadi <b>askar</b>.</em>' },
+        { 
+            layout: 'exercise_classify_table', 
+            title: 'Misi 2: Latihan 1', 
+            instruction: 'Klasifikasikan ayat-ayat dalam jadual berikut sama ada mempunyai KKTT <b>Berpelengkap</b> atau <b>Tanpa Pelengkap</b>.', 
+            sentences: [
+                'Bayi itu menangis.', 
+                'Dia menjadi guru.', 
+                'Kapal itu belayar ke utara.',
+                'Kehidupannya bertambah miskin.',
+                'Mereka tinggal di kampung.',
+                'Anak-anak ayam itu berlarian.',
+                'Pokok itu tumbang semalam.',
+                'Wajahnya bertukar pucat.',
+                'Kereta api itu menuju ke selatan.',
+                'Semua murid beratur.'
+            ], 
+            answerId: 'ex3' 
+        },
+        { 
+            layout: 'exercise_build_sentence', 
+            title: 'Misi 2: Latihan 2', 
+            instruction: 'Bina ayat yang lengkap menggunakan kata kerja tak transitif di bawah.', 
+            verbs: [
+                'bertemu', 'runtuh', 'duduk', 'berbincang', 
+                'melompat', 'terbang', 'bekerja', 'pulang', 'tersenyum'
+            ], 
+            answerId: 'ex4' 
+        },
+        { layout: 'focus_card', title: 'Misi 3: Cabaran Pengukuhan', content: 'Anda sudah bersedia untuk cabaran terakhir! Uji kefahaman anda tentang kedua-dua jenis kata kerja.' },
+        { layout: 'exercise_final_challenge', title: 'Misi 3: Cabaran Terakhir', instruction: 'Isi tempat kosong dengan kata kerja yang paling sesuai daripada senarai di bawah.', paragraph: 'Setiap petang, Ali akan ________ ke taman untuk ________ bola sepak bersama kawan-kawannya. Ibunya selalu ________ nasi lemak untuk mereka. Mereka ________ dengan sangat gembira.', choices: ['pergi', 'menendang', 'memakan', 'bermain', 'menyediakan'], answerId: 'ex5' },
+        { layout: 'creative_writing', title: 'Misi 3: Cabaran Penulisan Kreatif', instruction: 'Lihat gambar di bawah. Tulis sebuah perenggan pendek (3-4 ayat) yang menceritakan suasana di taman ini. Gunakan sekurang-kurangnya <b>satu Kata Kerja Transitif</b> dan <b>satu Kata Kerja Tak Transitif</b>.', imageUrl: 'https://media.giphy.com/media/l41lP9Pk1s2jBg07K/giphy.gif', answerId: 'ex6' },
+        { layout: 'final_summary', title: 'Misi Selesai!', end_message: 'Syabas! Anda telah berjaya menguasai misi kata kerja. Teruskan latihan anda!', gif: 'mission complete celebration'}
+    ];
+
+    const grammarData = {
+        affixes: [
+            { term: 'meN-', usage: 'Awalan untuk kata kerja transitif aktif. Cth: membaca, menulis, melukis.' },
+            { term: 'beR-', usage: 'Awalan untuk kata kerja tak transitif. Cth: berjalan, berlari, bermain.' },
+            { term: 'di-', usage: 'Awalan untuk kata kerja pasif. Cth: dibaca, ditulis, dilukis.' },
+            { term: 'teR-', usage: 'Awalan yang membawa maksud tidak sengaja atau keupayaan. Cth: tersepak, ternampak, terangkat.' },
+            { term: '-kan', usage: 'Akhiran yang membentuk kata kerja transitif. Cth: ambilkan, buatkan.' },
+            { term: '-i', usage: 'Akhiran yang menjadikan kata kerja transitif. Cth: naiki, duduki.' }
+        ],
+        verbs: [
+            { term: 'Membaca (KKT)', usage: 'Dia suka membaca buku cerita.' },
+            { term: 'Menonton (KKT)', usage: 'Kami menonton filem di pawagam.' },
+            { term: 'Menyiram (KKT)', usage: 'Kakak menyiram pokok bunga.' },
+            { term: 'Tidur (KKTT)', usage: 'Bayi itu sedang tidur.' },
+            { term: 'Berdiri (KKTT)', usage: 'Dia berdiri di tepi jalan.' },
+            { term: 'Menjadi (KKTT)', usage: 'Adik bercita-cita untuk menjadi doktor.' }
+        ]
+    };
+    
+    // UTILITY FUNCTIONS
+    const el = (selector) => document.getElementById(selector);
+
+    async function checkGrammar(text, outputElementId) {
+        const outputEl = el(outputElementId);
+        if (!text.trim()) {
+            outputEl.innerHTML = '<p class="text-sm text-red-600">Sila masukkan ayat untuk disemak.</p>';
+            return;
+        }
+        outputEl.innerHTML = '<div class="flex items-center gap-2 text-sm"><div class="loader" style="width:16px; height:16px; border-width: 2px; margin: 0;"></div> Menyemak...</div>';
+
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+        const prompt = `Act as a Malay language grammar expert for a secondary school student. The user provides a sentence. Your task is to check if the verb usage (transitive/intransitive, affixes) is correct.
+        - If the grammar is correct, respond with only "Tatabahasa: Betul. 👍"
+        - If there is an error, briefly explain the error in simple Malay and provide the corrected sentence. Start your feedback with "Tatabahasa:".
+        - Keep the explanation very concise (1-2 sentences).
+        Sentence to check: "${text}"`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+            });
+
+            if (!response.ok) {
+                 const errorBody = await response.text();
+                 console.error('API Error Response:', errorBody);
+                 throw new Error(`API request failed with status ${response.status}`);
+            }
+
+            const data = await response.json();
+            const feedback = data.candidates[0].content.parts[0].text.trim();
+            outputEl.innerHTML = `<p class="text-sm">${feedback.replace(/Tatabahasa: /g, '<span class="font-bold">Tatabahasa:</span> ')}</p>`;
+
+        } catch (error) {
+            console.error("Error checking grammar:", error);
+            outputEl.innerHTML = '<p class="text-sm text-red-600">Maaf, sistem semakan sedang mengalami masalah.</p>';
+        }
+    }
+
+    async function generateExamples(concept, outputElementId) {
+        const outputEl = el(outputElementId);
+        outputEl.style.display = 'block';
+        outputEl.innerHTML = '<div class="flex items-center gap-2 text-sm"><div class="loader" style="width:16px; height:16px; border-width: 2px; margin: 0;"></div> Menjana contoh...</div>';
+
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+        const prompt = `Anda ialah seorang guru Bahasa Melayu yang membantu pelajar sekolah menengah.
+        Jana 3 ayat contoh yang ringkas dan jelas untuk konsep tatabahasa berikut: "${concept}".
+        Setiap ayat mestilah dalam senarai berbutir.
+        Contoh output:
+        <ul>
+        <li>Ayat contoh pertama di sini.</li>
+        <li>Ayat contoh kedua di sini.</li>
+        <li>Ayat contoh ketiga di sini.</li>
+        </ul>
+        Hanya berikan senarai HTML (<ul>) tanpa teks pengenalan.`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+            });
+
+            if (!response.ok) throw new Error('API request failed');
+
+            const data = await response.json();
+            const generatedHtml = data.candidates[0].content.parts[0].text.trim();
+            outputEl.innerHTML = `<h4>Contoh Tambahan ✨</h4>${generatedHtml}`;
+        } catch (error) {
+            console.error("Error generating examples:", error);
+            outputEl.innerHTML = '<p class="text-sm text-red-600">Maaf, tidak dapat menjana contoh pada masa ini.</p>';
+        }
+    }
+
+    async function expandStory(userText, outputElementId) {
+        const outputEl = el(outputElementId);
+        if (!userText.trim()) {
+            showToast('Sila tulis perenggan anda dahulu.');
+            return;
+        }
+        outputEl.style.display = 'block';
+        outputEl.innerHTML = '<div class="flex items-center gap-2 text-sm"><div class="loader" style="width:16px; height:16px; border-width: 2px; margin: 0;"></div> Mengembangkan cerita...</div>';
+
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+        const prompt = `Anda ialah seorang penulis kreatif. Sambung cerita pendek yang ditulis oleh seorang pelajar sekolah menengah ini dengan 2-3 ayat lagi. Kekalkan gaya bahasa yang sama dan pastikan sambungannya logik dan menarik.
+
+        Cerita pelajar:
+        "${userText}"
+
+        Sambungan anda:`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+            });
+
+            if (!response.ok) throw new Error('API request failed');
+
+            const data = await response.json();
+            const storyContinuation = data.candidates[0].content.parts[0].text.trim();
+            outputEl.innerHTML = `<h4>Sambungan Cerita ✨</h4><p><em>${userText}</em> ${storyContinuation}</p>`;
+
+        } catch (error) {
+            console.error("Error expanding story:", error);
+            outputEl.innerHTML = '<p class="text-sm text-red-600">Maaf, tidak dapat menyambung cerita pada masa ini.</p>';
+        }
+    }
+    
+    async function loadGiphy(searchTerm, outputElementId) {
+        const outputEl = el(outputElementId);
+        outputEl.innerHTML = '<div class="loader"></div>';
+        const apiUrl = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(searchTerm)}&limit=25&offset=0&rating=g&lang=en`;
+
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error('Giphy API request failed');
+            const data = await response.json();
+            if (data.data && data.data.length > 0) {
+                const randomIndex = Math.floor(Math.random() * data.data.length);
+                const gifUrl = data.data[randomIndex].images.original.url;
+                const gifAlt = data.data[randomIndex].title || "Celebration GIF";
+
+                const img = document.createElement('img');
+                img.src = gifUrl;
+                img.alt = gifAlt;
+                img.onload = () => {
+                    outputEl.innerHTML = '';
+                    outputEl.appendChild(img);
+                };
+            } else {
+                 outputEl.innerHTML = '<p class="text-4xl">🎉</p>';
+            }
+        } catch (error) {
+            console.error("Error loading Giphy:", error);
+            outputEl.innerHTML = '<p class="text-4xl">🎉</p>';
+        }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari & Opera
+          document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+          document.documentElement.msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { // Firefox
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { // Chrome, Safari & Opera
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { // IE/Edge
+          document.msExitFullscreen();
+        }
+      }
+    }
+    
+    // RENDER SLIDE FUNCTION
+    function renderSlide(slideIndex) {
+      const slide = slides[slideIndex];
+      const stage = el('stage');
+      stage.innerHTML = '';
+      stage.className = 'stage px-6 sm:px-10 lg:px-14 py-8 sm:py-10 md:py-12 card animate-fade-in';
+      let content = '';
+
+      switch(slide.layout) {
+        case 'name_input':
+            stage.classList.add('stage-centered', 'text-center');
+            content = `<div class="w-full max-w-lg">
+                <h1 class="title mb-4">${slide.title}</h1>
+                <p class="text-xl mb-8 opacity-80">${slide.subtitle}</p>
+                <div class="card p-6 bg-slate-50">
+                    <input type="text" id="studentNameInput" class="answer-input text-center text-lg" placeholder="Nama Penuh Anda...">
+                    <button onclick="startMission()" class="btn btn-primary mt-4 w-full">Mula Misi! / Start Mission!</button>
+                </div>
+            </div>`;
+            break;
+        case 'title_revamped':
+          stage.classList.add('stage-centered', 'text-center');
+          content = `<div class="w-full max-w-lg"><h1 class="title mb-4">${slide.title}</h1><p class="text-xl mb-8 opacity-80">${slide.subtitle}</p><div class="card p-6 bg-gradient-to-br from-blue-50 to-indigo-100"><p class="text-lg font-semibold mb-2">Soalan Permulaan (Pemanas Badan):</p><p class="text-lg italic">${slide.starter}</p></div></div>`;
+          break;
+        case 'focus_card':
+          content = `<h2 class="text-3xl font-bold mb-6">${slide.title}</h2><div class="stimulus-box text-lg">${slide.content}</div><div class="mt-4"><button onclick="generateExamples('${slide.title}', 'ai-examples-${slideIndex}')" class="btn btn-primary bg-indigo-500 hover:bg-indigo-600">✨ Jana Contoh Ayat Lagi</button></div><div id="ai-examples-${slideIndex}" class="ai-generated-box" style="display: none;"></div>`;
+          break;
+        case 'exercise_fill_in':
+          content = `<h2 class="text-3xl font-bold mb-6">${slide.title}</h2><div class="activity-box"><h3 class="font-bold text-lg mb-3">📝 Tugasan</h3><p class="mb-4">${slide.instruction}</p><ul class="list-decimal pl-5 mb-4 text-base" style="max-height: 250px; overflow-y: auto;">${slide.questions.map(q => `<li class="mb-2">${q}</li>`).join('')}</ul><textarea id="${slide.answerId}" class="answer" placeholder="Tulis jawapan anda di sini mengikut nombor..."></textarea><button onclick="saveAnswer('${slide.answerId}')" class="btn btn-success mt-3">Simpan Jawapan</button></div>`;
+          break;
+        case 'exercise_correction_list':
+             content = `<h2 class="text-3xl font-bold mb-6">${slide.title}</h2>
+                        <div class="grid lg:grid-cols-2 gap-8">
+                            <div class="stimulus-box">
+                                <h3 class="font-bold text-lg mb-3">Ayat Salah</h3>
+                                <ul class="list-decimal pl-5 text-red-600 text-base" style="max-height: 200px; overflow-y: auto;">
+                                    ${slide.wrongSentences.map(s => `<li class="mb-2">${s}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="activity-box">
+                                <h3 class="font-bold text-lg mb-3">📝 Tugasan</h3>
+                                <p class="mb-4">${slide.instruction}</p>
+                                <textarea id="${slide.answerId}" class="answer" placeholder="Tulis semula ayat yang betul mengikut nombor..."></textarea>
+                                <div class="mt-4 flex flex-wrap gap-2 justify-between items-center">
+                                    <button onclick="saveAnswer('${slide.answerId}')" class="btn btn-success">Simpan Jawapan</button>
+                                    <button onclick="checkGrammar(el('${slide.answerId}').value, 'feedback-${slide.answerId}')" class="btn btn-info">✨ Semak Tatabahasa</button>
+                                </div>
+                                <div id="feedback-${slide.answerId}" class="feedback-box"></div>
+                            </div>
+                        </div>`;
+            break;
+        case 'exercise_classify_table':
+            content = `<h2 class="text-3xl font-bold mb-6">${slide.title}</h2>
+                       <div class="activity-box">
+                           <h3 class="font-bold text-lg mb-3">📝 Tugasan</h3>
+                           <p class="mb-4">${slide.instruction}</p>
+                           <div class="overflow-x-auto">
+                               <table class="structure-table text-base">
+                                   <thead>
+                                       <tr>
+                                           <th class="w-2/3">Ayat</th>
+                                           <th>Jenis (Berpelengkap / Tanpa Pelengkap)</th>
+                                       </tr>
+                                   </thead>
+                                   <tbody>
+                                        ${slide.sentences.map(s => `
+                                            <tr>
+                                                <td>${s}</td>
+                                                <td><input type="text" class="w-full bg-transparent p-1 border-b border-gray-400 focus:outline-none focus:border-blue-500" placeholder="Taip jawapan..."></td>
+                                            </tr>
+                                        `).join('')}
+                                   </tbody>
+                               </table>
+                           </div>
+                           <p class="mt-4 text-sm text-gray-600">Nota: Jawapan dalam jadual tidak disimpan secara automatik. Sila tulis jawapan akhir anda dalam kotak teks di bawah untuk simpan.</p>
+                           <textarea id="${slide.answerId}" class="answer mt-2" placeholder="Salin jawapan anda di sini untuk disimpan. Cth: 1. Tanpa Pelengkap, 2. Berpelengkap..."></textarea>
+                           <button onclick="saveAnswer('${slide.answerId}')" class="btn btn-success mt-3">Simpan Jawapan</button>
+                       </div>`;
+            break;
+        case 'exercise_build_sentence':
+            content = `<h2 class="text-3xl font-bold mb-6">${slide.title}</h2>
+                       <div class="activity-box">
+                           <h3 class="font-bold text-lg mb-3">📝 Tugasan</h3>
+                           <p class="mb-4">${slide.instruction}</p>
+                            <div class="overflow-x-auto" style="max-height: 350px;">
+                               <table class="structure-table text-base">
+                                   <thead>
+                                       <tr>
+                                           <th class="w-1/3">Kata Kerja</th>
+                                           <th>Ayat Anda</th>
+                                       </tr>
+                                   </thead>
+                                   <tbody>
+                                        ${slide.verbs.map(v => `
+                                            <tr>
+                                                <td class="font-bold">${v}</td>
+                                                <td><input type="text" class="w-full bg-transparent p-1 border-b border-gray-400 focus:outline-none focus:border-blue-500" placeholder="Bina ayat di sini..."></td>
+                                            </tr>
+                                        `).join('')}
+                                   </tbody>
+                               </table>
+                           </div>
+                           <p class="mt-4 text-sm text-gray-600">Nota: Jawapan dalam jadual tidak disimpan. Sila tulis jawapan akhir anda dalam kotak teks di bawah untuk simpanan dan semakan AI.</p>
+                           <textarea id="${slide.answerId}" class="answer mt-2" placeholder="Salin semua ayat anda di sini untuk disimpan..."></textarea>
+                           <div class="mt-4 flex flex-wrap gap-2 justify-between items-center">
+                               <button onclick="saveAnswer('${slide.answerId}')" class="btn btn-success">Simpan Jawapan</button>
+                               <button onclick="checkGrammar(el('${slide.answerId}').value, 'feedback-${slide.answerId}')" class="btn btn-info">✨ Semak Tatabahasa</button>
+                           </div>
+                           <div id="feedback-${slide.answerId}" class="feedback-box"></div>
+                       </div>`;
+            break;
+        case 'exercise_final_challenge':
+            content = `<h2 class="text-3xl font-bold mb-6">${slide.title}</h2><div class="activity-box"><h3 class="font-bold text-lg mb-3">📝 Tugasan</h3><p class="mb-4">${slide.instruction}</p><div class="stimulus-box mb-4"><p>${slide.paragraph}</p></div><p class="text-sm mb-2">Pilihan Jawapan:</p><div class="flex flex-wrap gap-2 mb-4">${slide.choices.map(c => `<span class="pill">${c}</span>`).join('')}</div><textarea id="${slide.answerId}" class="answer" placeholder="Tulis jawapan anda mengikut urutan..."></textarea><button onclick="saveAnswer('${slide.answerId}')" class="btn btn-success mt-3">Simpan Jawapan</button></div>`;
+            break;
+        case 'creative_writing':
+            content = `<h2 class="text-3xl font-bold mb-6">${slide.title}</h2><div class="grid lg:grid-cols-2 gap-8 items-start"><div><p class="mb-4">${slide.instruction}</p><img src="${slide.imageUrl}" alt="Suasana di taman" class="rounded-lg shadow-md w-full"></div><div class="activity-box"><textarea id="${slide.answerId}" class="answer" placeholder="Tulis perenggan anda di sini..."></textarea><div class="mt-4 flex flex-wrap gap-2 items-center"><button onclick="saveAnswer('${slide.answerId}')" class="btn btn-success">Simpan Jawapan</button><button onclick="checkGrammar(el('${slide.answerId}').value, 'feedback-${slide.answerId}')" class="btn btn-info">✨ Semak Tatabahasa</button><button onclick="expandStory(el('${slide.answerId}').value, 'ai-story-${slide.answerId}')" class="btn btn-primary bg-indigo-500 hover:bg-indigo-600">✨ Kembangkan Cerita</button></div><div id="feedback-${slide.answerId}" class="feedback-box"></div><div id="ai-story-${slide.answerId}" class="ai-generated-box mt-4" style="display: none;"></div></div></div>`;
+            break;
+        case 'final_summary':
+            stage.classList.add('stage-centered', 'text-center');
+            content = `<div id="gif-${slideIndex}" class="gif-container mb-6 !h-48 max-w-sm"><div class="loader"></div></div><h2 class="text-4xl font-bold mb-4">${slide.title}</h2><p class="text-xl max-w-2xl">${slide.end_message}</p>`;
+      }
+
+      stage.innerHTML = content;
+      
+      // Load Giphy for final slide dynamically
+      if(slide.layout === 'final_summary' && slide.gif) {
+          loadGiphy(slide.gif, `gif-${slideIndex}`);
+      }
+
+      el('slide-counter').textContent = `Slide ${slideIndex + 1} / ${slides.length}`;
+      updateNav();
+      loadAnswers(slide.answerId);
+    }
+    
+    // --- EVENT HANDLERS & HELPERS ---
+    function saveAnswer(answerId) {
+      if (!answerId) return;
+      const answerEl = el(answerId);
+      if (answerEl) {
+        studentAnswers[answerId] = answerEl.value;
+        localStorage.setItem('mfl_grammar_answers', JSON.stringify(studentAnswers));
+        showToast('Jawapan disimpan!');
+      }
+    }
+    function loadAnswers(answerId) {
+      if (!answerId) return;
+      const answerEl = el(answerId);
+      if (answerEl && studentAnswers[answerId]) {
+        answerEl.value = studentAnswers[answerId];
+      }
+    }
+    function updateNav() {
+        const navButtons = el('nav-buttons');
+        if (currentSlide === 0) { // Name input slide
+            navButtons.style.display = 'none';
+        } else {
+            navButtons.style.display = 'flex';
+            el('prevBtn').disabled = currentSlide === 1; // Can't go back from first content slide
+            el('nextBtn').disabled = currentSlide === slides.length - 1;
+        }
+    }
+    function nextSlide() { if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1); }
+    function prevSlide() { if (currentSlide > 1) goToSlide(currentSlide - 1); }
+    function goToSlide(slideIndex) {
+        currentSlide = slideIndex;
+        localStorage.setItem('mfl_grammar_slide', currentSlide);
+        renderSlide(currentSlide);
+    }
+
+    function startMission() {
+        const nameInput = el('studentNameInput');
+        if (nameInput.value.trim()) {
+            studentName = nameInput.value.trim();
+            localStorage.setItem('mfl_student_name', studentName);
+            el('studentNameDisplay').textContent = studentName;
+            goToSlide(1); // Go to the first content slide
+        } else {
+            showToast('Sila masukkan nama anda.');
+        }
+    }
+
+    // --- VOCABULARY HELPER ---
+    let vocabPanelOpen = false;
+    let synth = window.speechSynthesis;
+
+    function populateVocab() {
+        const affixesContent = el('content-affixes');
+        const verbsContent = el('content-verbs');
+        affixesContent.innerHTML = grammarData.affixes.map(item => `
+            <div class="vocab-item" onclick="speak('${item.term}. ${item.usage}')">
+                <div><div class="font-bold">${item.term}</div><div class="text-xs opacity-80">${item.usage}</div></div>
+            </div>`).join('');
+        verbsContent.innerHTML = grammarData.verbs.map(item => `
+            <div class="vocab-item" onclick="speak('${item.usage}')">
+                <div><div class="font-bold">${item.term}</div><div class="text-xs opacity-80">${item.usage}</div></div>
+            </div>`).join('');
+    }
+
+    function speak(text) {
+        if (synth.speaking) {
+            synth.cancel();
+        }
+        let utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ms-MY';
+        synth.speak(utterance);
+    }
+
+    function setupVocabHelper() {
+        el('vocab-toggle').addEventListener('click', () => {
+            vocabPanelOpen = !vocabPanelOpen;
+            el('vocab-panel').classList.toggle('show');
+        });
+
+        el('tab-affixes').addEventListener('click', () => switchTab('affixes'));
+        el('tab-verbs').addEventListener('click', () => switchTab('verbs'));
+    }
+
+    function switchTab(tabName) {
+        el('tab-affixes').classList.remove('active');
+        el('tab-verbs').classList.remove('active');
+        el('content-affixes').style.display = 'none';
+        el('content-verbs').style.display = 'none';
+
+        el(`tab-${tabName}`).classList.add('active');
+        el(`content-${tabName}`).style.display = 'block';
+    }
+
+    // --- TOAST NOTIFICATION ---
+    function showToast(message) {
+        const container = el('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 100);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toast.addEventListener('transitionend', () => toast.remove());
+        }, 3000);
+    }
+
+    // INITIALIZATION
+    function init() {
+        studentName = localStorage.getItem('mfl_student_name') || '';
+        studentAnswers = JSON.parse(localStorage.getItem('mfl_grammar_answers') || '{}');
+        const savedSlide = parseInt(localStorage.getItem('mfl_grammar_slide'), 10);
+        
+        if (studentName) {
+            el('studentNameDisplay').textContent = studentName;
+            currentSlide = !isNaN(savedSlide) && savedSlide > 0 ? savedSlide : 1;
+        } else {
+            currentSlide = 0; // Start at name input
+        }
+
+        el('prevBtn').addEventListener('click', prevSlide);
+        el('nextBtn').addEventListener('click', nextSlide);
+        
+        el('toggleObj').addEventListener('click', () => {
+            const objList = el('objList');
+            objList.classList.toggle('hidden');
+            const isHidden = objList.classList.contains('hidden');
+            el('toggleObj').textContent = isHidden ? 'Tunjuk / Show' : 'Sembunyi / Hide';
+        });
+        
+        document.addEventListener('keydown', e => {
+            if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') return;
+            if (e.key === 'ArrowRight' && !el('nextBtn').disabled) nextSlide();
+            if (e.key === 'ArrowLeft' && !el('prevBtn').disabled) prevSlide();
+            if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                toggleFullScreen();
+            }
+        });
+
+        populateVocab();
+        setupVocabHelper();
+        renderSlide(currentSlide);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
+
+
